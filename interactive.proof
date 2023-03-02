@@ -1,0 +1,18 @@
+define Seq = fun (x : Nat) -> fun (y : Nat) -> fun (e : Eq x y) -> J (fun (x : Nat) -> fun (y : Nat) -> fun (e : Eq x y) -> Eq (S x) (S y)) (fun (x : A) -> Refl (S x)) x y e
+check Seq = Pi (x : Nat) -> Pi (y : Nat) -> Pi (e : Eq x y) -> Eq (S x) (S y)
+define add = fun (x : Nat) -> fun (y : Nat) -> Ind (fun (_ : Nat) -> Nat) x (fun (_ : Nat) -> fun (n : Nat) -> S n) y
+eval add (S (S (S Z))) (S (S Z))
+define zadd = fun (n : Nat) -> Ind (fun (n : Nat) -> Eq (add Z n) n) (Eq Z Z) (fun (n : Nat) -> fun (e : Eq (add Z n) n) -> Seq (add Z n) n e) n
+check zadd = Pi (n : Nat) -> Eq (add Z n) n
+define addz = fun (n : Nat) -> Refl n
+check addz = Pi (n : Nat) -> Eq (add n Z) n
+define addassoc = fun (x : Nat) -> fun (y : Nat) -> fun (z : Nat) -> Ind (fun (z : Nat) -> Eq (add (add x y) z) (add x (add y z))) (Refl (add x y)) (fun (z : Nat) -> fun (e : Eq (add (add x y) z) (add x (add y z))) -> Seq (add (add x y) z) (add x (add y z)) e) z
+check addassoc = Pi (x : Nat) -> Pi (y : Nat) -> Pi (z : Nat) -> Eq (add (add x y) z) (add x (add y z))
+define addcomm = fun (x : Nat) -> fun (y : Nat) -> Ind (fun (x : Nat) -> Eq (add x y) (add y x)) (zadd y) (fun (x : Nat) -> fun (e : Eq (add x y) (add y x)) -> (J (fun (m : Nat) -> fun (n : Nat) -> fun (e : Eq m n) -> Pi (f : Eq (S m) (add (S x) y)) -> Eq (S n) (add (S x) y)) (fun (m : Nat) -> fun (f : Eq (S m) (add (S x) y)) -> f) (add x y) (add y x) e) (Ind (fun (y : Nat) -> Eq (S (add x y)) (add (S x) y)) (Refl (S x)) (fun (y : Nat) -> fun (e : Eq (S (add x y)) (add (S x) y)) -> Seq (S (add x y)) (add (S x) y)) y)) x
+check addcomm = Pi (x : Nat) -> Pi (y : Nat) -> Eq (add x y) (add y x)
+define mul = fun (x : Nat) -> fun (y : Nat) -> Ind (fun (_ : Nat) -> Nat) Z (fun (_ : Nat) -> fun (n : Nat) -> add n x) y
+eval mul (S (S (S Z))) (S (S Z))
+define zmul = fun (x : Nat) -> Ind (fun (x : Nat) -> Eq (mul Z x) Z) (Refl Z) (fun (x : Nat) -> fun (e : Eq (mul Z x) Z) -> e) x
+check zmul = Pi (x : Nat) -> Eq (mul Z x) Z
+define mulz = fun (x : Nat) -> Refl Z
+check mulz = Pi (x : Nat) -> Eq (mul x Z) Z

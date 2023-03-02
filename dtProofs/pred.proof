@@ -1,0 +1,3 @@
+define pred = fun (x : Nat) -> Ind (fun (_ : Nat) -> Nat) Z (fun (n : Nat) -> fun (_ : Nat) -> n) x
+eval pred Z
+eval pred (S (S (S Z)))
